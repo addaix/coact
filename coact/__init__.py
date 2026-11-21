@@ -31,7 +31,7 @@ from coact.base import (
     ReturnContract,
 )
 from coact.analysis import back, diff, estimate, inventory
-from coact.complete import complete, plan_completion
+from coact.complete import ToolCeilingError, complete, plan_completion
 from coact.emit import (
     emit_agent,
     emitters,
@@ -109,6 +109,7 @@ __all__ = [
     # COMPLETE
     "complete",
     "plan_completion",
+    "ToolCeilingError",
     "CompletionPolicy",
     "default_policy",
     # REALIZE

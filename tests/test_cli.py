@@ -244,3 +244,19 @@ def test_bad_command_line_still_exits_2(monkeypatch):
     with pytest.raises(SystemExit) as excinfo:
         cli.main()
     assert excinfo.value.code == 2
+
+
+def test_ceiling_refuses_a_tool_outside_it(tmp_path):
+    from coact import ToolCeilingError
+
+    skill = str(_skill(tmp_path))  # default tools: Read, Grep, Glob
+    with pytest.raises(ToolCeilingError, match="Glob") as e:
+        cli.complete(skill, ceiling="Read,Grep")
+    assert "Read" in str(e.value) and isinstance(e.value, ValueError)
+    with pytest.raises(ToolCeilingError):
+        cli.emit(skill, ceiling="Read,Grep")
+
+
+def test_ceiling_within_it_behaves_as_before(tmp_path):
+    skill = str(_skill(tmp_path))
+    assert cli.complete(skill, ceiling="Read,Grep,Glob") == cli.complete(skill)

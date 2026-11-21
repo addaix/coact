@@ -19,7 +19,7 @@ from __future__ import annotations
 
 from dataclasses import replace
 from pathlib import Path
-from typing import Optional, Union
+from typing import Iterable, Optional, Union
 
 from skill.base import Skill
 from skill.stores import LocalSkillStore
@@ -38,11 +38,35 @@ from coact.synthesis import synthesize_persona, synthesize_return_contract
 SkillSource = Union[str, Path, Skill]
 
 
+class ToolCeilingError(ValueError):
+    """A completed agent would hold tools outside the permissions ceiling."""
+
+    def __init__(self, tools: list[str], ceiling: list[str]):
+        self.tools, self.ceiling = tools, ceiling
+        super().__init__(
+            f"tool(s) {', '.join(tools)} outside the permissions ceiling "
+            f"[{', '.join(ceiling)}]"
+        )
+
+
+def parse_ceiling(ceiling: Union[None, str, Iterable[str]]) -> Optional[list[str]]:
+    """Normalize a ceiling: ``None`` stays ``None``; ``'Read,Grep'`` or an iterable -> list.
+
+    >>> parse_ceiling('Read, Grep'), parse_ceiling(['Read']), parse_ceiling(None)
+    (['Read', 'Grep'], ['Read'], None)
+    """
+    if ceiling is None:
+        return None
+    parts = ceiling.split(",") if isinstance(ceiling, str) else list(ceiling)
+    return [t.strip() for t in parts if str(t).strip()]
+
+
 def plan_completion(
     source: SkillSource,
     *,
     policy: Optional[CompletionPolicy] = None,
     llm: object = None,
+    ceiling: Union[None, str, Iterable[str]] = None,
 ) -> AgentPlan:
     """Plan the skill→agent completion, recording the provenance of every field.
 
@@ -50,6 +74,10 @@ def plan_completion(
     or a skill key/name resolvable in the local store or project skills. Pass an
     optional ``llm`` (any ``callable(str)->str``, an ``aw`` ``StepConfig``, or a
     model name) to *draft* a richer persona — the mechanical path needs none.
+
+    ``ceiling`` (a list, or ``'Read,Grep'``) is a permissions ceiling: the agent's
+    tool allowlist must be a subset of it, else :class:`ToolCeilingError` names
+    the offending tools (never silently dropped).
 
     >>> from skill.base import Skill, SkillMeta
     >>> s = Skill(meta=SkillMeta(name='auditor', description='Audit a bundle for issues.'), body='steps')
@@ -80,6 +108,11 @@ def plan_completion(
     # tools (declared-or-heuristic + report) then narrow with denylist.
     tools, tools_reason = policy.infer_tools(skill, coact_meta)
     tools_source = "coact-frontmatter" if coact_meta.tools is not None else "inferred"
+    ceiling_tools = parse_ceiling(ceiling)
+    if ceiling_tools is not None:
+        outside = [t for t in tools if t not in ceiling_tools]
+        if outside:
+            raise ToolCeilingError(outside, ceiling_tools)
     prov.append(FieldProvenance("tools", tools, tools_source, tools_reason))
     if tools_source == "inferred":
         warnings.append(f"tools not declared; {tools_reason}")
@@ -192,6 +225,7 @@ def complete(
     *,
     policy: Optional[CompletionPolicy] = None,
     llm: object = None,
+    ceiling: Union[None, str, Iterable[str]] = None,
 ) -> AgentDefinition:
     """Complete a skill into an :class:`AgentDefinition` (the plan's agent).
 
@@ -201,7 +235,7 @@ def complete(
     >>> ad.name, ad.skills, ('Return contract' in ad.prompt)
     ('ux', ['ux'], True)
     """
-    return plan_completion(source, policy=policy, llm=llm).agent
+    return plan_completion(source, policy=policy, llm=llm, ceiling=ceiling).agent
 
 
 # ---------------------------------------------------------------------------
