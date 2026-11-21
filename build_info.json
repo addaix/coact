@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "built_at": "2026-11-21T15:31:14Z",
+  "built_at": "2026-11-21T15:31:53Z",
   "package": {
     "name": "coact",
     "version": "0.0.4",
@@ -25,8 +25,8 @@
     "sha_in_history": true,
     "ref": "refs/heads/main",
     "ref_name": "main",
-    "run_id": "44919475531",
-    "run_url": "https://github.com/addaix/coact/actions/runs/44919475531",
+    "run_id": "44919538993",
+    "run_url": "https://github.com/addaix/coact/actions/runs/44919538993",
     "server_url": "https://github.com"
   },
   "tools": {
