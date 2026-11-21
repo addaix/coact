@@ -38,11 +38,11 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://thorwhalen.github.io/coact/"
-Repository = "https://github.com/thorwhalen/coact"
-Issues = "https://github.com/thorwhalen/coact/issues"
-Changelog = "https://github.com/thorwhalen/coact/blob/main/CHANGELOG.md"
-Documentation = "https://thorwhalen.github.io/coact"
+Homepage = "https://addaix.github.io/coact/"
+Repository = "https://github.com/addaix/coact"
+Issues = "https://github.com/addaix/coact/issues"
+Changelog = "https://github.com/addaix/coact/blob/main/CHANGELOG.md"
+Documentation = "https://addaix.github.io/coact"
 
 [project.scripts]
 coact = "coact.__main__:main"
