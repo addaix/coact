@@ -42,21 +42,37 @@ def plan(skill: str) -> str:
     return _plan(skill).render()
 
 
-def complete(skill: str, *, dest: str | None = None, plan: bool = False) -> str:
-    """Complete a skill into an agent definition (print the .md, or write to --dest)."""
+def complete(
+    skill: str,
+    *,
+    dest: str | None = None,
+    plan: bool = False,
+    ceiling: str | None = None,
+) -> str:
+    """Complete a skill into an agent definition (print the .md, or write to --dest).
+
+    ``--ceiling Read,Grep`` refuses a skill whose tools fall outside that list.
+    """
     if plan:
-        return _plan(skill).render()
-    agent = _complete(skill)
+        return _plan(skill, ceiling=ceiling).render()
+    agent = _complete(skill, ceiling=ceiling)
     if dest:
         return f"Wrote {_emit(agent, 'claude-agents-md', dest=dest)}"
     return _emit(agent, "claude-agents-md")
 
 
 def emit(
-    skill: str, *, target: str = "claude-agents-md", dest: str | None = None
+    skill: str,
+    *,
+    target: str = "claude-agents-md",
+    dest: str | None = None,
+    ceiling: str | None = None,
 ) -> str:
-    """Complete a skill and emit it to a target (claude-agents-md, sdk-agent-dict, ...)."""
-    agent = _complete(skill)
+    """Complete a skill and emit it to a target (claude-agents-md, sdk-agent-dict, ...).
+
+    ``--ceiling Read,Grep`` refuses a skill whose tools fall outside that list.
+    """
+    agent = _complete(skill, ceiling=ceiling)
     result = _emit(agent, target, dest=dest)
     return str(result)
 
