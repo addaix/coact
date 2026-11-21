@@ -1,4 +1,4 @@
-> built 2026-11-21 15:31 UTC from bb3aa30 (main) · coact 0.0.4. Details: build_info.json
+> built 2026-11-21 22:32 UTC from 8ff17b2 (main) · coact 0.0.4. Details: build_info.json
 
 # index.html.md
 
@@ -961,9 +961,9 @@ realize(agent, backend='host')                     # materialize for Claude Code
 
 ### Functions
 
-| [`complete`](_autosummary/coact.html.md#coact.complete)(source, \*[, policy, llm])                | Complete a skill into an [`AgentDefinition`](_autosummary/coact.html.md#coact.AgentDefinition) (the plan's agent).                   |
+| [`complete`](_autosummary/coact.html.md#coact.complete)(source, \*[, policy, llm, ceiling])       | Complete a skill into an [`AgentDefinition`](_autosummary/coact.html.md#coact.AgentDefinition) (the plan's agent).                   |
 |-----------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------|
-| [`plan_completion`](_autosummary/coact.html.md#coact.plan_completion)(source, \*[, policy, llm])         | Plan the skill→agent completion, recording the provenance of every field.                                                       |
+| [`plan_completion`](_autosummary/coact.html.md#coact.plan_completion)(source, \*[, policy, llm, ...])    | Plan the skill→agent completion, recording the provenance of every field.                                                       |
 | [`realize`](_autosummary/coact.html.md#coact.realize)(target, \*[, backend])                     | Realize an agent (or skill, or list) via the named backend.                                                                     |
 | [`realize_host`](_autosummary/coact.html.md#coact.realize_host)(target, \*[, scope, dest, ...])       | Materialize agents (+ linked skills) so the host agent runs them.                                                               |
 | [`realize_sdk`](_autosummary/coact.html.md#coact.realize_sdk)(target, \*[, llm, runner, ...])        | Realize a single agent as a runnable [`RunnableAgent`](_autosummary/coact.html.md#coact.RunnableAgent) (aw-compatible).            |
@@ -1013,6 +1013,11 @@ realize(agent, backend='host')                     # materialize for Claude Code
 | [`PublishResult`](_autosummary/coact.html.md#coact.PublishResult)(target[, dry_run, artifact, ...])     | The outcome of [`publish()`](_autosummary/coact.html.md#coact.publish) — what was (or *would be*) produced.           |
 | [`CoactMeta`](_autosummary/coact.html.md#coact.CoactMeta)([tools, disallowed_tools, model, ...])    | The parsed `coact:` block (every field optional; all default to absent).                                                 |
 | [`AgentStore`](_autosummary/coact.html.md#coact.AgentStore)([root, scope, project_dir])              | A `MutableMapping[str, AgentDefinition]` over a `.claude/agents/` dir.                                                   |
+
+### Exceptions
+
+| [`ToolCeilingError`](_autosummary/coact.html.md#coact.ToolCeilingError)(tools, ceiling)   | A completed agent would hold tools outside the permissions ceiling.   |
+|-------------------------------------------------------------------------------------|-----------------------------------------------------------------------|
 
 ### *class* coact.AgentDefinition(name, description, prompt='', tools=None, disallowed_tools=list(), model=None, skills=list(), memory=None, mcp_servers=list(), permission_mode=None, returns=ReturnContract(), consumes=None, source_skill=None)
 
@@ -1651,6 +1656,12 @@ no entry here are reported in `info['unbound_tools']` and never passed on.
 
 Also request native structured output (in addition to the prompt instruction).
 
+### *exception* coact.ToolCeilingError(tools, ceiling)
+
+Bases: [`ValueError`](https://docs.python.org/3/builtins/exceptions.html#ValueError)
+
+A completed agent would hold tools outside the permissions ceiling.
+
 ### *class* coact.ToolSpec(name, description='', input_schema=None, handler=None)
 
 Bases: [`object`](https://docs.python.org/3/builtins/functions.html#object)
@@ -1718,7 +1729,7 @@ True
 * **Return type:**
   `Skill`
 
-### coact.complete(source, , policy=None, llm=None)
+### coact.complete(source, , policy=None, llm=None, ceiling=None)
 
 Complete a skill into an [`AgentDefinition`](_autosummary/coact.html.md#coact.AgentDefinition) (the plan’s agent).
 
@@ -1904,7 +1915,7 @@ Accepts the several shapes coact callers have on hand:
 * **Return type:**
   [`CoactMeta`](_autosummary/coact.frontmatter.html.md#coact.frontmatter.CoactMeta)
 
-### coact.plan_completion(source, , policy=None, llm=None)
+### coact.plan_completion(source, , policy=None, llm=None, ceiling=None)
 
 Plan the skill→agent completion, recording the provenance of every field.
 
@@ -1912,6 +1923,10 @@ Accepts a `Skill`, a path to a skill directory / SKILL.md,
 or a skill key/name resolvable in the local store or project skills. Pass an
 optional `llm` (any `callable(str)->str`, an `aw` `StepConfig`, or a
 model name) to *draft* a richer persona — the mechanical path needs none.
+
+`ceiling` (a list, or `'Read,Grep'`) is a permissions ceiling: the agent’s
+tool allowlist must be a subset of it, else [`ToolCeilingError`](_autosummary/coact.html.md#coact.ToolCeilingError) names
+the offending tools (never silently dropped).
 
 ```pycon
 >>> from skill.base import Skill, SkillMeta
@@ -2632,7 +2647,7 @@ Return a new policy with overridden fields (cascading defaults).
 
 body substrings that imply the agent writes/edits files.
 
-### coact.policy.default_policy *= CompletionPolicy(default_model='sonnet', default_memory=None, default_tools=('Read', 'Grep', 'Glob'), read_only_tools=frozenset({'WebFetch', 'Glob', 'Grep', 'Read', 'NotebookRead', 'WebSearch'}), opus_keywords=('orchestrat\\\\w\*', 'architect\\\\w\*', 'coordinat\\\\w\*', '\\\\bplan(?:ning|s|ned)?\\\\b', '\\\\bdesign(?:s|ing|ed)?\\\\b', 'review\\\\w\*'), opus_skill_threshold=3, write_keywords=('write', 'edit', 'create file', 'modify', 'generate', 'refactor'))*
+### coact.policy.default_policy *= CompletionPolicy(default_model='sonnet', default_memory=None, default_tools=('Read', 'Grep', 'Glob'), read_only_tools=frozenset({'WebFetch', 'Grep', 'WebSearch', 'Read', 'Glob', 'NotebookRead'}), opus_keywords=('orchestrat\\\\w\*', 'architect\\\\w\*', 'coordinat\\\\w\*', '\\\\bplan(?:ning|s|ned)?\\\\b', '\\\\bdesign(?:s|ing|ed)?\\\\b', 'review\\\\w\*'), opus_skill_threshold=3, write_keywords=('write', 'edit', 'create file', 'modify', 'generate', 'refactor'))*
 
 The default policy instance (importable, mutable-by-override).
 
@@ -3204,7 +3219,7 @@ Convert CamelCase / kebab-case / spaces to snake_case.
 
 # About this build
 
-This documentation was built on **2026-11-21 15:31 UTC** from commit <a href="https://github.com/addaix/coact/commit/bb3aa3045e2843febf87810cf8aa9d8aeec3f27d"><code>bb3aa30</code></a> on branch <code>main</code>, for **coact 0.0.4** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-11-21 22:32 UTC** from commit <a href="https://github.com/addaix/coact/commit/8ff17b2b267f23e1c4ac258d2a4261e07030ed67"><code>8ff17b2</code></a> on branch <code>main</code>, for **coact 0.0.4** (from <code>pyproject.toml</code>).
 
 #### NOTE
 Nothing suggests a mismatch: the tree was clean at the commit above, and the documented version is the one on PyPI.
@@ -3213,7 +3228,7 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 
 |                     |                                                                                                                                                     |
 |---------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/addaix/coact/commit/bb3aa3045e2843febf87810cf8aa9d8aeec3f27d"><code>bb3aa3045e2843febf87810cf8aa9d8aeec3f27d</code></a> |
+| Commit              | <a href="https://github.com/addaix/coact/commit/8ff17b2b267f23e1c4ac258d2a4261e07030ed67"><code>8ff17b2b267f23e1c4ac258d2a4261e07030ed67</code></a> |
 | Branch              | <code>main</code>                                                                                                                                   |
 | Tags at this commit | none                                                                                                                                                |
 | Working tree        | clean                                                                                                                                               |
@@ -3224,15 +3239,15 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
 | Repository   | <code>addaix/coact</code>                                                                  |
-| Run          | <a href="https://github.com/addaix/coact/actions/runs/44919538993">44919538993</a>         |
+| Run          | <a href="https://github.com/addaix/coact/actions/runs/44957161489">44957161489</a>         |
 | Ref          | <code>refs/heads/main</code>                                                               |
-| Event commit | <code>bb3aa3045e2843febf87810cf8aa9d8aeec3f27d</code> (in the history of the built commit) |
+| Event commit | <code>8ff17b2b267f23e1c4ac258d2a4261e07030ed67</code> (in the history of the built commit) |
 
 ## Tools
 
 |          |         |
 |----------|---------|
-| epythet  | 0.2.22  |
+| epythet  | 0.2.23  |
 | Sphinx   | 9.1.1   |
 | docutils | 0.22.4  |
 | Python   | 3.12.16 |
@@ -3257,8 +3272,8 @@ Latest release: <a href="https://pypi.org/project/coact/0.0.4/">0.0.4</a>, the s
 
 ```bash
 git clone https://github.com/addaix/coact && cd coact
-git checkout bb3aa3045e2843febf87810cf8aa9d8aeec3f27d
-pip install "epythet==0.2.22"
+git checkout 8ff17b2b267f23e1c4ac258d2a4261e07030ed67
+pip install "epythet==0.2.23"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```
 

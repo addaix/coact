@@ -61,6 +61,12 @@
       CoactMeta
       AgentStore
    
+   .. rubric:: Exceptions
+
+   .. autosummary::
+   
+      ToolCeilingError
+   
 .. rubric:: Modules
 
 .. autosummary::

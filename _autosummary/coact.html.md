@@ -31,9 +31,9 @@ realize(agent, backend='host')                     # materialize for Claude Code
 
 ### Functions
 
-| [`complete`](#coact.complete)(source, \*[, policy, llm])                | Complete a skill into an [`AgentDefinition`](#coact.AgentDefinition) (the plan's agent).                   |
+| [`complete`](#coact.complete)(source, \*[, policy, llm, ceiling])       | Complete a skill into an [`AgentDefinition`](#coact.AgentDefinition) (the plan's agent).                   |
 |-----------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------|
-| [`plan_completion`](#coact.plan_completion)(source, \*[, policy, llm])         | Plan the skill→agent completion, recording the provenance of every field.                                                       |
+| [`plan_completion`](#coact.plan_completion)(source, \*[, policy, llm, ...])    | Plan the skill→agent completion, recording the provenance of every field.                                                       |
 | [`realize`](#coact.realize)(target, \*[, backend])                     | Realize an agent (or skill, or list) via the named backend.                                                                     |
 | [`realize_host`](#coact.realize_host)(target, \*[, scope, dest, ...])       | Materialize agents (+ linked skills) so the host agent runs them.                                                               |
 | [`realize_sdk`](#coact.realize_sdk)(target, \*[, llm, runner, ...])        | Realize a single agent as a runnable [`RunnableAgent`](#coact.RunnableAgent) (aw-compatible).            |
@@ -83,6 +83,11 @@ realize(agent, backend='host')                     # materialize for Claude Code
 | [`PublishResult`](#coact.PublishResult)(target[, dry_run, artifact, ...])     | The outcome of [`publish()`](#coact.publish) — what was (or *would be*) produced.           |
 | [`CoactMeta`](#coact.CoactMeta)([tools, disallowed_tools, model, ...])    | The parsed `coact:` block (every field optional; all default to absent).                                                 |
 | [`AgentStore`](#coact.AgentStore)([root, scope, project_dir])              | A `MutableMapping[str, AgentDefinition]` over a `.claude/agents/` dir.                                                   |
+
+### Exceptions
+
+| [`ToolCeilingError`](#coact.ToolCeilingError)(tools, ceiling)   | A completed agent would hold tools outside the permissions ceiling.   |
+|-------------------------------------------------------------------------------------|-----------------------------------------------------------------------|
 
 ### *class* coact.AgentDefinition(name, description, prompt='', tools=None, disallowed_tools=list(), model=None, skills=list(), memory=None, mcp_servers=list(), permission_mode=None, returns=ReturnContract(), consumes=None, source_skill=None)
 
@@ -721,6 +726,12 @@ no entry here are reported in `info['unbound_tools']` and never passed on.
 
 Also request native structured output (in addition to the prompt instruction).
 
+### *exception* coact.ToolCeilingError(tools, ceiling)
+
+Bases: [`ValueError`](https://docs.python.org/3/builtins/exceptions.html#ValueError)
+
+A completed agent would hold tools outside the permissions ceiling.
+
 ### *class* coact.ToolSpec(name, description='', input_schema=None, handler=None)
 
 Bases: [`object`](https://docs.python.org/3/builtins/functions.html#object)
@@ -788,7 +799,7 @@ True
 * **Return type:**
   `Skill`
 
-### coact.complete(source, , policy=None, llm=None)
+### coact.complete(source, , policy=None, llm=None, ceiling=None)
 
 Complete a skill into an [`AgentDefinition`](#coact.AgentDefinition) (the plan’s agent).
 
@@ -974,7 +985,7 @@ Accepts the several shapes coact callers have on hand:
 * **Return type:**
   [`CoactMeta`](coact.frontmatter.html.md#coact.frontmatter.CoactMeta)
 
-### coact.plan_completion(source, , policy=None, llm=None)
+### coact.plan_completion(source, , policy=None, llm=None, ceiling=None)
 
 Plan the skill→agent completion, recording the provenance of every field.
 
@@ -982,6 +993,10 @@ Accepts a `Skill`, a path to a skill directory / SKILL.md,
 or a skill key/name resolvable in the local store or project skills. Pass an
 optional `llm` (any `callable(str)->str`, an `aw` `StepConfig`, or a
 model name) to *draft* a richer persona — the mechanical path needs none.
+
+`ceiling` (a list, or `'Read,Grep'`) is a permissions ceiling: the agent’s
+tool allowlist must be a subset of it, else [`ToolCeilingError`](#coact.ToolCeilingError) names
+the offending tools (never silently dropped).
 
 ```pycon
 >>> from skill.base import Skill, SkillMeta
