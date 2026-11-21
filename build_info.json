@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "built_at": "2026-10-20T16:05:20Z",
+  "built_at": "2026-11-21T15:31:14Z",
   "package": {
     "name": "coact",
     "version": "0.0.4",
@@ -9,31 +9,31 @@
   },
   "git": {
     "available": true,
-    "commit": "981aa28c489f027ea9ce6e083a62736fff92c366",
-    "short_commit": "981aa28",
+    "commit": "bb3aa3045e2843febf87810cf8aa9d8aeec3f27d",
+    "short_commit": "bb3aa30",
     "branch": "main",
     "tags": [],
     "dirty": false,
-    "remote_url": "https://github.com/thorwhalen/coact",
-    "commit_url": "https://github.com/thorwhalen/coact/commit/981aa28c489f027ea9ce6e083a62736fff92c366",
+    "remote_url": "https://github.com/addaix/coact",
+    "commit_url": "https://github.com/addaix/coact/commit/bb3aa3045e2843febf87810cf8aa9d8aeec3f27d",
     "error": null
   },
   "ci": {
     "provider": "github",
-    "repository": "thorwhalen/coact",
-    "sha": "981aa28c489f027ea9ce6e083a62736fff92c366",
+    "repository": "addaix/coact",
+    "sha": "bb3aa3045e2843febf87810cf8aa9d8aeec3f27d",
     "sha_in_history": true,
     "ref": "refs/heads/main",
     "ref_name": "main",
-    "run_id": "39454071007",
-    "run_url": "https://github.com/thorwhalen/coact/actions/runs/39454071007",
+    "run_id": "44919475531",
+    "run_url": "https://github.com/addaix/coact/actions/runs/44919475531",
     "server_url": "https://github.com"
   },
   "tools": {
-    "epythet": "0.2.21",
+    "epythet": "0.2.22",
     "sphinx": "9.1.1",
     "docutils": "0.22.4",
-    "python": "3.12.15"
+    "python": "3.12.16"
   },
   "config": {
     "theme": "auto",
@@ -64,7 +64,7 @@
     "relation": "same",
     "error": null
   },
-  "reproduce": "git clone https://github.com/thorwhalen/coact && cd coact\ngit checkout 981aa28c489f027ea9ce6e083a62736fff92c366\npip install \"epythet==0.2.21\"\nepythet quickstart . --ignore tests/ scrap/ examples/",
+  "reproduce": "git clone https://github.com/addaix/coact && cd coact\ngit checkout bb3aa3045e2843febf87810cf8aa9d8aeec3f27d\npip install \"epythet==0.2.22\"\nepythet quickstart . --ignore tests/ scrap/ examples/",
   "warnings": [],
   "alignment": {
     "aligned": true,

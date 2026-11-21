@@ -5,7 +5,7 @@ orphan: true
 
 # About this build
 
-This documentation was built on **2026-10-20 16:05 UTC** from commit <a href="https://github.com/thorwhalen/coact/commit/981aa28c489f027ea9ce6e083a62736fff92c366"><code>981aa28</code></a> on branch <code>main</code>, for **coact 0.0.4** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-11-21 15:31 UTC** from commit <a href="https://github.com/addaix/coact/commit/bb3aa3045e2843febf87810cf8aa9d8aeec3f27d"><code>bb3aa30</code></a> on branch <code>main</code>, for **coact 0.0.4** (from <code>pyproject.toml</code>).
 
 :::{note}
 Nothing suggests a mismatch: the tree was clean at the commit above, and the documented version is the one on PyPI.
@@ -15,29 +15,29 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 
 | | |
 |---|---|
-| Commit | <a href="https://github.com/thorwhalen/coact/commit/981aa28c489f027ea9ce6e083a62736fff92c366"><code>981aa28c489f027ea9ce6e083a62736fff92c366</code></a> |
+| Commit | <a href="https://github.com/addaix/coact/commit/bb3aa3045e2843febf87810cf8aa9d8aeec3f27d"><code>bb3aa3045e2843febf87810cf8aa9d8aeec3f27d</code></a> |
 | Branch | <code>main</code> |
 | Tags at this commit | none |
 | Working tree | clean |
-| Remote | <code>https://github.com/thorwhalen/coact</code> |
+| Remote | <code>https://github.com/addaix/coact</code> |
 
 ## Continuous integration
 
 | | |
 |---|---|
-| Repository | <code>thorwhalen/coact</code> |
-| Run | <a href="https://github.com/thorwhalen/coact/actions/runs/39454071007">39454071007</a> |
+| Repository | <code>addaix/coact</code> |
+| Run | <a href="https://github.com/addaix/coact/actions/runs/44919475531">44919475531</a> |
 | Ref | <code>refs/heads/main</code> |
-| Event commit | <code>981aa28c489f027ea9ce6e083a62736fff92c366</code> (in the history of the built commit) |
+| Event commit | <code>bb3aa3045e2843febf87810cf8aa9d8aeec3f27d</code> (in the history of the built commit) |
 
 ## Tools
 
 | | |
 |---|---|
-| epythet | 0.2.21 |
+| epythet | 0.2.22 |
 | Sphinx | 9.1.1 |
 | docutils | 0.22.4 |
-| Python | 3.12.15 |
+| Python | 3.12.16 |
 
 ## Configuration as resolved
 
@@ -58,9 +58,9 @@ Latest release: <a href="https://pypi.org/project/coact/0.0.4/">0.0.4</a>, the s
 ## Reproduce
 
 ```bash
-git clone https://github.com/thorwhalen/coact && cd coact
-git checkout 981aa28c489f027ea9ce6e083a62736fff92c366
-pip install "epythet==0.2.21"
+git clone https://github.com/addaix/coact && cd coact
+git checkout bb3aa3045e2843febf87810cf8aa9d8aeec3f27d
+pip install "epythet==0.2.22"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```
 
