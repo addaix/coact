@@ -1,4 +1,4 @@
-> built 2026-11-21 22:32 UTC from 8ff17b2 (main) · coact 0.0.4. Details: build_info.json
+> built 2026-11-22 14:37 UTC from 12ad041 (main) · coact 0.0.4. Details: build_info.json
 
 # index.html.md
 
@@ -2647,7 +2647,7 @@ Return a new policy with overridden fields (cascading defaults).
 
 body substrings that imply the agent writes/edits files.
 
-### coact.policy.default_policy *= CompletionPolicy(default_model='sonnet', default_memory=None, default_tools=('Read', 'Grep', 'Glob'), read_only_tools=frozenset({'WebFetch', 'Grep', 'WebSearch', 'Read', 'Glob', 'NotebookRead'}), opus_keywords=('orchestrat\\\\w\*', 'architect\\\\w\*', 'coordinat\\\\w\*', '\\\\bplan(?:ning|s|ned)?\\\\b', '\\\\bdesign(?:s|ing|ed)?\\\\b', 'review\\\\w\*'), opus_skill_threshold=3, write_keywords=('write', 'edit', 'create file', 'modify', 'generate', 'refactor'))*
+### coact.policy.default_policy *= CompletionPolicy(default_model='sonnet', default_memory=None, default_tools=('Read', 'Grep', 'Glob'), read_only_tools=frozenset({'WebSearch', 'Grep', 'NotebookRead', 'WebFetch', 'Read', 'Glob'}), opus_keywords=('orchestrat\\\\w\*', 'architect\\\\w\*', 'coordinat\\\\w\*', '\\\\bplan(?:ning|s|ned)?\\\\b', '\\\\bdesign(?:s|ing|ed)?\\\\b', 'review\\\\w\*'), opus_skill_threshold=3, write_keywords=('write', 'edit', 'create file', 'modify', 'generate', 'refactor'))*
 
 The default policy instance (importable, mutable-by-override).
 
@@ -3219,7 +3219,7 @@ Convert CamelCase / kebab-case / spaces to snake_case.
 
 # About this build
 
-This documentation was built on **2026-11-21 22:32 UTC** from commit <a href="https://github.com/addaix/coact/commit/8ff17b2b267f23e1c4ac258d2a4261e07030ed67"><code>8ff17b2</code></a> on branch <code>main</code>, for **coact 0.0.4** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-11-22 14:37 UTC** from commit <a href="https://github.com/addaix/coact/commit/12ad0413137a1926500eb85bf1219c7adb62d335"><code>12ad041</code></a> on branch <code>main</code>, for **coact 0.0.4** (from <code>pyproject.toml</code>).
 
 #### NOTE
 Nothing suggests a mismatch: the tree was clean at the commit above, and the documented version is the one on PyPI.
@@ -3228,7 +3228,7 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 
 |                     |                                                                                                                                                     |
 |---------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/addaix/coact/commit/8ff17b2b267f23e1c4ac258d2a4261e07030ed67"><code>8ff17b2b267f23e1c4ac258d2a4261e07030ed67</code></a> |
+| Commit              | <a href="https://github.com/addaix/coact/commit/12ad0413137a1926500eb85bf1219c7adb62d335"><code>12ad0413137a1926500eb85bf1219c7adb62d335</code></a> |
 | Branch              | <code>main</code>                                                                                                                                   |
 | Tags at this commit | none                                                                                                                                                |
 | Working tree        | clean                                                                                                                                               |
@@ -3239,9 +3239,9 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
 | Repository   | <code>addaix/coact</code>                                                                  |
-| Run          | <a href="https://github.com/addaix/coact/actions/runs/44957161489">44957161489</a>         |
+| Run          | <a href="https://github.com/addaix/coact/actions/runs/45033702030">45033702030</a>         |
 | Ref          | <code>refs/heads/main</code>                                                               |
-| Event commit | <code>8ff17b2b267f23e1c4ac258d2a4261e07030ed67</code> (in the history of the built commit) |
+| Event commit | <code>12ad0413137a1926500eb85bf1219c7adb62d335</code> (in the history of the built commit) |
 
 ## Tools
 
@@ -3272,7 +3272,7 @@ Latest release: <a href="https://pypi.org/project/coact/0.0.4/">0.0.4</a>, the s
 
 ```bash
 git clone https://github.com/addaix/coact && cd coact
-git checkout 8ff17b2b267f23e1c4ac258d2a4261e07030ed67
+git checkout 12ad0413137a1926500eb85bf1219c7adb62d335
 pip install "epythet==0.2.23"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```
