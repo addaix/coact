@@ -2,7 +2,7 @@
 
 # About this build
 
-This documentation was built on **2026-11-22 14:37 UTC** from commit <a href="https://github.com/addaix/coact/commit/12ad0413137a1926500eb85bf1219c7adb62d335"><code>12ad041</code></a> on branch <code>main</code>, for **coact 0.0.4** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-11-23 07:47 UTC** from commit <a href="https://github.com/addaix/coact/commit/df1ee7cc675ddf12a28769ba8e08b506f15f8982"><code>df1ee7c</code></a> on branch <code>main</code>, for **coact 0.0.4** (from <code>pyproject.toml</code>).
 
 #### NOTE
 Nothing suggests a mismatch: the tree was clean at the commit above, and the documented version is the one on PyPI.
@@ -11,7 +11,7 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 
 |                     |                                                                                                                                                     |
 |---------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/addaix/coact/commit/12ad0413137a1926500eb85bf1219c7adb62d335"><code>12ad0413137a1926500eb85bf1219c7adb62d335</code></a> |
+| Commit              | <a href="https://github.com/addaix/coact/commit/df1ee7cc675ddf12a28769ba8e08b506f15f8982"><code>df1ee7cc675ddf12a28769ba8e08b506f15f8982</code></a> |
 | Branch              | <code>main</code>                                                                                                                                   |
 | Tags at this commit | none                                                                                                                                                |
 | Working tree        | clean                                                                                                                                               |
@@ -22,15 +22,15 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
 | Repository   | <code>addaix/coact</code>                                                                  |
-| Run          | <a href="https://github.com/addaix/coact/actions/runs/45033702030">45033702030</a>         |
+| Run          | <a href="https://github.com/addaix/coact/actions/runs/45133486189">45133486189</a>         |
 | Ref          | <code>refs/heads/main</code>                                                               |
-| Event commit | <code>12ad0413137a1926500eb85bf1219c7adb62d335</code> (in the history of the built commit) |
+| Event commit | <code>df1ee7cc675ddf12a28769ba8e08b506f15f8982</code> (in the history of the built commit) |
 
 ## Tools
 
 |          |         |
 |----------|---------|
-| epythet  | 0.2.23  |
+| epythet  | 0.2.24  |
 | Sphinx   | 9.1.1   |
 | docutils | 0.22.4  |
 | Python   | 3.12.16 |
@@ -55,8 +55,8 @@ Latest release: <a href="https://pypi.org/project/coact/0.0.4/">0.0.4</a>, the s
 
 ```bash
 git clone https://github.com/addaix/coact && cd coact
-git checkout 12ad0413137a1926500eb85bf1219c7adb62d335
-pip install "epythet==0.2.23"
+git checkout df1ee7cc675ddf12a28769ba8e08b506f15f8982
+pip install "epythet==0.2.24"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```
 

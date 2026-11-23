@@ -2,10 +2,7 @@
 
 # coact
 
-**Reuse your “AI stuff” across the layers of the modern agent stack.** `coact`
-(“co-act” — skills and agents acting as one reusable substrate) turns the skills
-you already have into agent definitions, and turns those definitions into
-agents that actually run.
+**Reuse your “AI stuff” across the layers of the modern agent stack.** `coact` (“co-act” — skills and agents acting as one reusable substrate) turns the skills you already have into agent definitions, and turns those definitions into agents that actually run.
 
 ```default
 python functions/scripts  →  .claude/skills/  →  .claude/agents/  →  running agents
@@ -14,17 +11,10 @@ python functions/scripts  →  .claude/skills/  →  .claude/agents/  →  runni
 
 `coact` owns the two transitions the rest of the ecosystem doesn’t:
 
-- **COMPLETE** — start from a `.claude/skills/` skill and *complete* it into a
-  `.claude/agents/` definition: add the agent-only extras (persona, return
-  contract, tool allowlist, model, memory) that a skill doesn’t carry.
-- **REALIZE** — take a completed definition and produce something that runs,
-  choosing the right backend (the host agent, the Claude Agent SDK, or
-  MCP-exposed tools for a foreign host).
+- **COMPLETE** — start from a `.claude/skills/` skill and *complete* it into a `.claude/agents/` definition: add the agent-only extras (persona, return contract, tool allowlist, model, memory) that a skill doesn’t carry.
+- **REALIZE** — take a completed definition and produce something that runs, choosing the right backend (the host agent, the Claude Agent SDK, or MCP-exposed tools for a foreign host).
 
-It is glue, not a new framework: it builds on [`skill`](https://github.com/thorwhalen/skill)
-(skill data model + registries), [`aw`](https://github.com/thorwhalen/aw)
-(the `AgenticStep` runtime), and [`py2mcp`](https://github.com/i2mint/py2mcp)
-(Python → MCP). See [`misc/docs/REUSE.md`]().
+It is glue, not a new framework: it builds on [`skill`](https://github.com/thorwhalen/skill) (skill data model + registries), [`aw`](https://github.com/thorwhalen/aw) (the `AgenticStep` runtime), and [`py2mcp`](https://github.com/i2mint/py2mcp) (Python → MCP). See [`misc/docs/REUSE.md`]().
 
 ## Install
 
@@ -39,6 +29,7 @@ pip install coact[crewai]    # + the CrewAI realize backend
 
 ## Quick start
 
+<!-- wads-docs: skip needs a skill in the reader project or an LLM key -->
 ```python
 from coact import complete, emit_agent, realize
 
@@ -54,6 +45,7 @@ realize(agent, backend="host")
 
 Prefer to look before you leap? Everything has a dry-run:
 
+<!-- wads-docs: skip needs a skill in the reader project or an LLM key -->
 ```python
 from coact import plan_completion
 
@@ -61,13 +53,9 @@ plan = plan_completion(".claude/skills/ux-analyst")
 print(plan.render())   # every synthesized field + WHERE it came from + warnings
 ```
 
-That extends to the one backend that touches disk:
-`realize(agent, backend="host", dry_run=True)` returns the agent files and skill
-links it *would* write — without creating any of them.
+That extends to the one backend that touches disk: `realize(agent, backend="host", dry_run=True)` returns the agent files and skill links it *would* write — without creating any of them.
 
-A complete, runnable walk through all of this — a real skill → `complete` →
-`emit` → `realize(host)` → `realize(sdk)` → `estimate`/`inventory` — lives in
-[`examples/`]() (no LLM, no API key needed):
+A complete, runnable walk through all of this — a real skill → `complete` → `emit` → `realize(host)` → `realize(sdk)` → `estimate`/`inventory` — lives in [`examples/`]() (no LLM, no API key needed):
 
 ```bash
 python examples/walkthrough.py
@@ -92,10 +80,7 @@ coact describe  "a tool that looks up the weather for a city"     # NL → a dra
 
 ## Publish — ship a capability to a chatbot host
 
-Beyond COMPLETE/REALIZE, the **PUBLISH** axis packages a capability (Python
-tools) as a deployable chatbot integration. The first target,
-`claude-local-mcpb`, builds a **Claude Desktop `.mcpb` Desktop Extension** — a
-one-click *local* (stdio) MCP server, built by [`py2mcp`](https://github.com/i2mint/py2mcp):
+Beyond COMPLETE/REALIZE, the **PUBLISH** axis packages a capability (Python tools) as a deployable chatbot integration. The first target, `claude-local-mcpb`, builds a **Claude Desktop `.mcpb` Desktop Extension** — a one-click *local* (stdio) MCP server, built by [`py2mcp`](https://github.com/i2mint/py2mcp):
 
 ```python
 from coact import publish
@@ -104,13 +89,9 @@ publish(["mypkg.tools:summarize", "mypkg.tools:translate"],
         name="text-tools", dest="dist")          # → dist/text-tools.mcpb
 ```
 
-Sources can be `module:function` refs, live callables, or a skill carrying a
-`coact: mcp:` block. `dry_run=True` (or `--dry-run`) previews the bundle without
-writing it. This is the **local** surface (stdio, no OAuth). Install: `pip install coact[mcpb]`.
+Sources can be `module:function` refs, live callables, or a skill carrying a `coact: mcp:` block. `dry_run=True` (or `--dry-run`) previews the bundle without writing it. This is the **local** surface (stdio, no OAuth). Install: `pip install coact[mcpb]`.
 
-For the **remote** surface — a claude.ai *custom connector* (a hosted
-Streamable-HTTP MCP server reached from Anthropic’s cloud over HTTPS + OAuth 2.1) —
-use the `claude-remote-connector` target, which scaffolds a deployable service:
+For the **remote** surface — a claude.ai *custom connector* (a hosted Streamable-HTTP MCP server reached from Anthropic’s cloud over HTTPS + OAuth 2.1) — use the `claude-remote-connector` target, which scaffolds a deployable service:
 
 ```python
 from coact import publish_remote
@@ -120,19 +101,9 @@ publish_remote(["mypkg.tools:summarize"], name="my-conn", dest="out",
 # → out/my-conn-connector/  (server/app.py + connector_config.json + DEPLOY.md + …)
 ```
 
-The scaffold is an OAuth 2.1 **resource server** (validates a managed IdP’s
-audience-bound JWTs; never issues tokens) built by
-[`py2mcp`](https://github.com/i2mint/py2mcp)’s `http.mk_http_app`; coact writes the
-deploy packaging, py2mcp/FastMCP serves the MCP. Follow the generated `DEPLOY.md`.
-Claude Code plugins, ChatGPT Apps, and Gemini are further planned targets on the
-same open-closed registry. Background:
-[`misc/docs/CHATBOT_INTEGRATION_LANDSCAPE.md`]().
+The scaffold is an OAuth 2.1 **resource server** (validates a managed IdP’s audience-bound JWTs; never issues tokens) built by [`py2mcp`](https://github.com/i2mint/py2mcp)’s `http.mk_http_app`; coact writes the deploy packaging, py2mcp/FastMCP serves the MCP. Follow the generated `DEPLOY.md`. Claude Code plugins, ChatGPT Apps, and Gemini are further planned targets on the same open-closed registry. Background: [`misc/docs/CHATBOT_INTEGRATION_LANDSCAPE.md`]().
 
-There are two ways to get an `IntegrationSpec`. The **mechanical** ingress above
-(refs / callables / skills) uses **no LLM**. The **opt-in** ingress refines a
-natural-language description into a *draft* spec — proposed tools with inferred
-input schemas — routing generation through [`aix`](https://github.com/thorwhalen/aix)
-(multi-provider) via [`oa`](https://github.com/thorwhalen/oa):
+There are two ways to get an `IntegrationSpec`. The **mechanical** ingress above (refs / callables / skills) uses **no LLM**. The **opt-in** ingress refines a natural-language description into a *draft* spec — proposed tools with inferred input schemas — routing generation through [`aix`](https://github.com/thorwhalen/aix) (multi-provider) via [`oa`](https://github.com/thorwhalen/oa):
 
 ```python
 from coact import integration_spec_from_description
@@ -144,32 +115,20 @@ print(spec.render())   # a DRAFT: a tool becomes a runnable ref only if the mode
                        # binds it to module:function code — else it stays proposed
 ```
 
-The draft is a **design artifact**: tools without a `module:function` handler are
-*proposed* (won’t run until you bind them to real code). The LLM touches **only**
-this path — the code → `.mcpb` path stays LLM-free (`DECISIONS.md` D10/D18).
-Install: `pip install coact[nl]`.
+The draft is a **design artifact**: tools without a `module:function` handler are *proposed* (won’t run until you bind them to real code). The LLM touches **only** this path — the code → `.mcpb` path stays LLM-free (`DECISIONS.md` D10/D18). Install: `pip install coact[nl]`.
 
 ## The model in one minute
 
-A `SKILL.md` is *procedural knowledge injected into the caller’s turn*; a subagent
-is *a separate worker with its own context, persona, tools, model, and a defined
-return value*. They overlap heavily — **an agent is mostly a skill plus a thin
-“extras” envelope.** COMPLETE synthesizes that envelope; the two extras that
-actually matter are:
+A `SKILL.md` is *procedural knowledge injected into the caller’s turn*; a subagent is *a separate worker with its own context, persona, tools, model, and a defined return value*. They overlap heavily — **an agent is mostly a skill plus a thin “extras” envelope.** COMPLETE synthesizes that envelope; the two extras that actually matter are:
 
 1. the **persona** (system prompt / identity), and
 2. the **return contract** (a schema so a manager can consume the agent’s output).
 
-`coact` keeps the **skill on disk as the single source of truth** and makes the
-agent *reference* it by name — it never copies a skill body into an agent. One
-`AgentDefinition` object serializes to both the filesystem `.claude/agents/*.md`
-and the Agent SDK form.
+`coact` keeps the **skill on disk as the single source of truth** and makes the agent *reference* it by name — it never copies a skill body into an agent. One `AgentDefinition` object serializes to both the filesystem `.claude/agents/*.md` and the Agent SDK form.
 
 ### The `coact:` frontmatter (optional)
 
-To make the lift reproducible, a skill may carry an additive `coact:` block
-(ignored by every other tool). When present it wins over policy; when absent
-`coact` infers + reports what it guessed.
+To make the lift reproducible, a skill may carry an additive `coact:` block (ignored by every other tool). When present it wins over policy; when absent `coact` infers + reports what it guessed.
 
 ```yaml
 ---
@@ -197,6 +156,7 @@ coact:
 | `litellm`        | a `RunnableLLMAgent` (also `aw.AgenticStep`) backed by **LiteLLM** — realize the *same* definition against any provider (OpenAI, Gemini, Mistral, Ollama, …); proof the definition isn’t Anthropic-specific        | in-process            |
 | `langgraph`      | a `RunnableLLMGraphAgent` (also `aw.AgenticStep`) backed by a LangGraph `CompiledStateGraph` (`langchain.agents.create_agent`); the graph is **exposed** (`.agent`) to drop as a node into *your own* `StateGraph` | in-process            |
 | `crewai`         | a `RunnableCrewAIAgent` (also `aw.AgenticStep`) backed by a single `crewai.Agent` (`Agent.kickoff`); the `Agent` is **exposed** (`.agent`) for *your own* `Crew`                                                   | in-process            |
+<!-- wads-docs: skip needs a skill in the reader project or an LLM key -->
 ```python
 agent_step = realize(agent, backend="sdk")          # aw-compatible runnable
 artifact, info = agent_step.execute(task, context={})
@@ -214,47 +174,32 @@ crew_step  = realize(agent, backend="crewai")       # crew_step.agent is a crewa
 
 ## Two boundaries to know
 
-- **Topology is out of scope.** A subagent definition can’t express graphs,
-  conditional edges, or cycles, and subagents can’t spawn subagents. `coact`
-  emits *definitions + tool/MCP wiring* and stops. Multi-agent orchestration is
-  left to the host’s manager or a thin shim you own (against the Agent SDK or
-  `aw`’s workflow chaining) — `coact` is not LangGraph. It *can* realize a single
-  definition **into** a LangGraph node or a CrewAI `Agent` (the `langgraph`/`crewai`
-  backends above), but it builds no graph or crew of its own — you compose the
-  exposed `.agent` into *your* topology.
-- **A running fleet is an optimization, not a default.** Multi-agent fan-out
-  costs roughly an order of magnitude more tokens, and the premium is worst on
-  *interdependent* tasks. So `backend="host"` (one agent runs the skills) is the
-  default, and `coact estimate` shows the tradeoff before you spawn a fleet:
-  ```python
-  from coact import estimate
-  print(estimate([agent_a, agent_b]).render())
-  ```
+- **Topology is out of scope.** A subagent definition can’t express graphs, conditional edges, or cycles, and subagents can’t spawn subagents. `coact` emits *definitions + tool/MCP wiring* and stops. Multi-agent orchestration is left to the host’s manager or a thin shim you own (against the Agent SDK or `aw`’s workflow chaining) — `coact` is not LangGraph. It *can* realize a single definition **into** a LangGraph node or a CrewAI `Agent` (the `langgraph`/`crewai` backends above), but it builds no graph or crew of its own — you compose the exposed `.agent` into *your* topology.
+- **A running fleet is an optimization, not a default.** Multi-agent fan-out costs roughly an order of magnitude more tokens, and the premium is worst on *interdependent* tasks. So `backend="host"` (one agent runs the skills) is the default, and `coact estimate` shows the tradeoff before you spawn a fleet:
 
-  If you do decide to fan out, `scaffold_fleet` emits a **starter** Python shim
-  wiring the realized agents under an `aw` coordinator — a sequential hand-off you
-  then reshape. It’s the one topology-adjacent thing `coact` writes, and only a
-  starter: `coact` emits it once and never runs it (the topology stays yours).
-  ```python
-  from coact import scaffold_fleet
-  scaffold_fleet([agent_a, agent_b], dest="fleet.py")   # a runnable starter you own
-  ```
+<!-- wads-docs: skip needs a skill in the reader project or an LLM key -->
+```python
+from coact import estimate
+print(estimate([agent_a, agent_b]).render())
+```
+
+If you do decide to fan out, `scaffold_fleet` emits a **starter** Python shim wiring the realized agents under an `aw` coordinator — a sequential hand-off you then reshape. It’s the one topology-adjacent thing `coact` writes, and only a starter: `coact` emits it once and never runs it (the topology stays yours).
+
+<!-- wads-docs: skip needs a skill in the reader project or an LLM key -->
+```python
+from coact import scaffold_fleet
+scaffold_fleet([agent_a, agent_b], dest="fleet.py")   # a runnable starter you own
+```
 
 ## Design notes
 
-- No LLM on any mechanical path; persona drafting is *optional* and injected
-  (`complete(skill, llm=...)`), never a hard provider dependency.
-- Open-closed registries for emit targets (`claude-agents-md`, `sdk-agent-dict`,
-  plus `crewai` / `openai-tools` auto-registered when [`aw`](https://github.com/thorwhalen/aw)
-  is installed) and realization backends — register your own without touching core.
-- Decisions are recorded in [`misc/docs/DECISIONS.md`]();
-  the build brief is [`misc/docs/COACT_SPEC.md`]().
+- No LLM on any mechanical path; persona drafting is *optional* and injected (`complete(skill, llm=...)`), never a hard provider dependency.
+- Open-closed registries for emit targets (`claude-agents-md`, `sdk-agent-dict`, plus `crewai` / `openai-tools` auto-registered when [`aw`](https://github.com/thorwhalen/aw) is installed) and realization backends — register your own without touching core.
+- Decisions are recorded in [`misc/docs/DECISIONS.md`](); the build brief is [`misc/docs/COACT_SPEC.md`]().
 
 ## Skills
 
-This package ships agent skills you can install into any agent host with
-[`gh skill`](https://cli.github.com/manual/gh_skill) (don’t have it?
-[install gh](https://cli.github.com/)):
+This package ships agent skills you can install into any agent host with [`gh skill`](https://cli.github.com/manual/gh_skill) (don’t have it? [install gh](https://cli.github.com/)):
 
 ```bash
 gh skill install thorwhalen/coact coact --agent claude-code
