@@ -27,9 +27,9 @@ provenance and warnings** — every synthesized field and *where it came from*:
 from coact import plan_completion
 
 plan = plan_completion(".claude/skills/ux-analyst")
-print(plan.render())     # name←skill, tools←inferred/coact:, model←policy, ...
-plan.agent               # the AgentDefinition it would produce
-plan.warnings            # e.g. "tools not declared; inferred from ..."
+print(plan.render())  # name←skill, tools←inferred/coact:, model←policy, ...
+plan.agent  # the AgentDefinition it would produce
+plan.warnings  # e.g. "tools not declared; inferred from ..."
 ```
 
 ```bash
@@ -41,9 +41,9 @@ When you're happy:
 ```python
 from coact import complete, emit_agent
 
-agent = complete(".claude/skills/ux-analyst")          # -> AgentDefinition
-print(emit_agent(agent, "claude-agents-md"))           # the .md, as text
-emit_agent(agent, "claude-agents-md", dest=".claude/agents/")   # write it
+agent = complete(".claude/skills/ux-analyst")  # -> AgentDefinition
+print(emit_agent(agent, "claude-agents-md"))  # the .md, as text
+emit_agent(agent, "claude-agents-md", dest=".claude/agents/")  # write it
 ```
 
 ```bash
@@ -87,7 +87,8 @@ Validate it (also runs under `skill validate` once coact is imported):
 
 ```python
 from coact import validate_coact_block, parse_coact_meta
-validate_coact_block(skill_frontmatter_dict)   # [] = valid/absent
+
+validate_coact_block(skill_frontmatter_dict)  # [] = valid/absent
 parse_coact_meta(".claude/skills/ux-analyst")  # -> CoactMeta
 ```
 

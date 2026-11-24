@@ -11,7 +11,10 @@ register your own without touching core).
 
 ```python
 from coact import realize
-realize(target, backend="host")     # target: AgentDefinition | skill source | agent .md | list
+
+realize(
+    target, backend="host"
+)  # target: AgentDefinition | skill source | agent .md | list
 ```
 
 | backend | what "running" means | cost | install |
@@ -29,10 +32,10 @@ Materializes files the host will discover, and links the skills the agent
 references (point-don't-copy stays intact):
 
 ```python
-res = realize(agent, backend="host")          # -> RealizedHost
-res.agents      # {name: Path} written under .claude/agents/
-res.skills      # {name: Path} linked under .claude/skills/
-res.warnings    # anything that couldn't be wired
+res = realize(agent, backend="host")  # -> RealizedHost
+res.agents  # {name: Path} written under .claude/agents/
+res.skills  # {name: Path} linked under .claude/skills/
+res.warnings  # anything that couldn't be wired
 ```
 
 ```bash
@@ -48,9 +51,9 @@ linked, touching nothing on disk (the returned `RealizedHost` has `dry_run=True`
 
 ```python
 preview = realize(agent, backend="host", dry_run=True)
-preview.agents     # {name: Path that WOULD be written}
-preview.skills     # {name: Path that WOULD be linked}
-preview.warnings   # e.g. a referenced skill that can't be resolved
+preview.agents  # {name: Path that WOULD be written}
+preview.skills  # {name: Path that WOULD be linked}
+preview.warnings  # e.g. a referenced skill that can't be resolved
 ```
 
 ```bash
@@ -60,7 +63,7 @@ coact realize .claude/skills/ux-analyst --backend host --dry-run
 ## sdk (an aw-compatible runnable)
 
 ```python
-step = realize(agent, backend="sdk")          # -> RunnableAgent (aw.AgenticStep)
+step = realize(agent, backend="sdk")  # -> RunnableAgent (aw.AgenticStep)
 artifact, info = step.execute(task, context={})
 ```
 
@@ -79,10 +82,12 @@ The same `AgentDefinition` realizes against three more in-process runtimes, each
 
 ```python
 step = realize(agent, backend="litellm", model_map={"sonnet": "openai/gpt-4o"})
-artifact, info = step.execute(task)                 # any LiteLLM provider
+artifact, info = step.execute(task)  # any LiteLLM provider
 
-graph_step = realize(agent, backend="langgraph")    # graph_step.agent: a CompiledStateGraph
-crew_step  = realize(agent, backend="crewai")       # crew_step.agent: a crewai.Agent
+graph_step = realize(
+    agent, backend="langgraph"
+)  # graph_step.agent: a CompiledStateGraph
+crew_step = realize(agent, backend="crewai")  # crew_step.agent: a crewai.Agent
 ```
 
 `langgraph` and `crewai` realize **one** definition into a framework-native object and
@@ -103,7 +108,7 @@ in-prompt instruction as a fallback — so structured output degrades gracefully
 ## mcp (a tool server)
 
 ```python
-server = realize(".claude/skills/ux-analyst", backend="mcp")   # FastMCP handle
+server = realize(".claude/skills/ux-analyst", backend="mcp")  # FastMCP handle
 server.run()
 ```
 
@@ -118,7 +123,10 @@ runs the skills) is the default for a reason. Check first:
 
 ```python
 from coact import estimate
-print(estimate([agent_a, agent_b]).render())   # multiplier + interdependence + recommendation
+
+print(
+    estimate([agent_a, agent_b]).render()
+)  # multiplier + interdependence + recommendation
 ```
 
 ```bash
@@ -137,7 +145,7 @@ Python shim wiring the realized `sdk` agents under an `aw` coordinator — a thi
 ```python
 from coact import scaffold_fleet
 
-scaffold_fleet([agent_a, agent_b])                 # -> the shim source (str)
+scaffold_fleet([agent_a, agent_b])  # -> the shim source (str)
 scaffold_fleet([agent_a, agent_b], dest="fleet.py")  # -> writes it, returns the Path
 ```
 

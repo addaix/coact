@@ -14,6 +14,7 @@ Audit drift between the SSOT skill and a derived agent (the §3.2 extras table):
 
 ```python
 from coact import diff
+
 print(diff(".claude/skills/ux-analyst", ".claude/agents/ux-analyst.md").render())
 # rows tagged [from skill] (name/description/skills) vs [extra (agent-only)]
 # (tools/model/memory/persona/returns/...)
@@ -35,11 +36,12 @@ you don't pay it blindly:
 
 ```python
 from coact import estimate
+
 est = estimate([agent_a, agent_b])
-est.token_multiplier_vs_chat   # ~4× one agent, ceiling ~15× a fleet
-est.interdependent             # True if they share skills or declare a `consumes` contract
+est.token_multiplier_vs_chat  # ~4× one agent, ceiling ~15× a fleet
+est.interdependent  # True if they share skills or declare a `consumes` contract
 est.shared_skills
-print(est.recommendation)      # often: "prefer one host agent (backend='host')"
+print(est.recommendation)  # often: "prefer one host agent (backend='host')"
 ```
 
 ```bash
@@ -55,6 +57,7 @@ case where a fleet *can* pay off — if the task value justifies the spend.
 
 ```python
 from coact import inventory
+
 inv = inventory(".")
 inv.skills, inv.agents, inv.mcp_tools
 print(inv.render())
@@ -78,6 +81,7 @@ you flesh out — not a faithful inverse of COMPLETE.
 
 ```python
 from coact import back
+
 skill_stub = back(".claude/agents/ad-hoc.md")
 print(skill_stub.to_string())
 ```

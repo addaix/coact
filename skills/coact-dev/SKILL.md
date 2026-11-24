@@ -78,11 +78,16 @@ Decisions are logged in `misc/docs/DECISIONS.md`; the build brief is
 ```python
 # A new emit target:
 from coact.emit import emitters
+
+
 @emitters.register("my-target")
 def _emit_my_target(ad): ...
 
+
 # A new realize backend:
 from coact.realize import backends
+
+
 @backends.register("my-backend")
 def realize_my_backend(target, **kw): ...
 ```

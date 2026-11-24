@@ -68,10 +68,11 @@ from pydantic_ai.providers import AnthropicProvider, OpenAIProvider
 
 # Provider chosen via env var; LiteLLM-style facade for free
 agent = Agent(
-    model="anthropic:claude-sonnet-4-5",     # or "openai:gpt-4", or "groq:..." etc.
+    model="anthropic:claude-sonnet-4-5",  # or "openai:gpt-4", or "groq:..." etc.
     system_prompt="You are a helpful assistant for {workspace}.",
-    deps_type=AppDeps,                         # typed dependencies for tools
+    deps_type=AppDeps,  # typed dependencies for tools
 )
+
 
 @agent.tool
 async def search_orders(ctx, customer_id: str) -> list[dict]:
@@ -88,6 +89,7 @@ from pydantic_ai.ui.vercel_ai import VercelAIAdapter
 from agent import agent
 
 app = FastAPI()
+
 
 @app.post("/api/chat")
 async def chat(body: dict):
@@ -133,11 +135,13 @@ from pydantic_ai import Agent
 
 DBOS()  # initialize, reads from your existing Postgres
 
+
 @DBOS.workflow()
 async def run_agent_workflow(prompt: str, thread_id: str) -> str:
     @DBOS.step(retries=3)
     async def llm_step(messages):
         return await agent.run(messages)
+
     result = await llm_step(prompt)
     return result.output
 ```
@@ -151,9 +155,11 @@ async def run_agent_workflow(prompt: str, thread_id: str) -> str:
 ```python
 from temporalio import workflow, activity
 
+
 @activity.defn
 async def llm_activity(prompt: str) -> str:
     return (await agent.run(prompt)).output
+
 
 @workflow.defn
 class AgentWorkflow:
@@ -182,10 +188,11 @@ from pydantic_ai.ui.vercel_ai import VercelAIAdapter
 
 # Option 2: assistant-stream (Python, MIT, by assistant-ui team)
 from assistant_stream import RunController, run_in_response
+
 async with RunController() as ctrl:
-    await ctrl.append_text("Hello")           # text-delta
-    await ctrl.tool_call(...)                  # tool-input-start/delta/available
-    await ctrl.tool_result(...)                # tool-output-available
+    await ctrl.append_text("Hello")  # text-delta
+    await ctrl.tool_call(...)  # tool-input-start/delta/available
+    await ctrl.tool_result(...)  # tool-output-available
 ```
 
 `assistant-stream` exposes `ReadOnlyCancellationSignal` — cancellation back-propagates from the UI's "Stop" button to the agent.

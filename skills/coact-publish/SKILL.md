@@ -70,7 +70,7 @@ spec = integration_spec_from_description(
     "expose os.path.basename and os.path.dirname as tools", name="paths"
 )
 # tools the description bound to existing code become runnable refs:
-publish(spec, name="paths", dest="dist")   # works iff spec.runnable_refs()
+publish(spec, name="paths", dest="dist")  # works iff spec.runnable_refs()
 ```
 
 The draft is a **design artifact**: tools are *proposed* (no importable handler)
@@ -84,8 +84,12 @@ Python API:
 ```python
 from coact import publish, integration_spec_from
 
-publish(["mypkg.tools:summarize", "mypkg.tools:translate"],
-        name="text-tools", dest="dist", author="Me")
+publish(
+    ["mypkg.tools:summarize", "mypkg.tools:translate"],
+    name="text-tools",
+    dest="dist",
+    author="Me",
+)
 ```
 
 Install the result: Claude Desktop → Settings → Extensions → Install Extension…
@@ -108,10 +112,15 @@ coact publish mypkg.tools:summarize --target claude-remote-connector \
 
 ```python
 from coact import publish_remote
-publish_remote(["mypkg.tools:summarize"], name="my-conn", dest="out",
-               connector_url="https://my-conn.example.com",
-               idp_issuer="https://my-idp.example.com",
-               required_scopes=["mcp:read"])
+
+publish_remote(
+    ["mypkg.tools:summarize"],
+    name="my-conn",
+    dest="out",
+    connector_url="https://my-conn.example.com",
+    idp_issuer="https://my-idp.example.com",
+    required_scopes=["mcp:read"],
+)
 ```
 
 It scaffolds an OAuth 2.1 **resource server** (validates a managed IdP's JWTs via

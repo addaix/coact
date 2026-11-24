@@ -245,7 +245,9 @@ def validate_coact_block(skill_or_meta: Skill | dict) -> list[str]:
     mcp = block.get("mcp")
     if mcp is not None:
         if not isinstance(mcp, list):
-            issues.append(f"{where}.mcp: must be a list of {{module, functions}} entries")
+            issues.append(
+                f"{where}.mcp: must be a list of {{module, functions}} entries"
+            )
         else:
             for i, entry in enumerate(mcp):
                 if not isinstance(entry, dict):

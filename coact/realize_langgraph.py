@@ -195,7 +195,9 @@ class RunnableLLMGraphAgent:
 
     def build_state(self, input_data: Any) -> dict:
         """Build the LangGraph input state (a single user message)."""
-        content = input_data if isinstance(input_data, str) else _to_user_text(input_data)
+        content = (
+            input_data if isinstance(input_data, str) else _to_user_text(input_data)
+        )
         return {"messages": [{"role": "user", "content": content}]}
 
     def execute(

@@ -125,7 +125,11 @@ class IntegrationSpec:
             for ref in self.tools:
                 lines.append(f"    - {ref}  [ref]")
             for ts in self.tool_specs:
-                tag = f"bound -> {ts.handler}" if ts.is_bound() else "proposed (no handler)"
+                tag = (
+                    f"bound -> {ts.handler}"
+                    if ts.is_bound()
+                    else "proposed (no handler)"
+                )
                 lines.append(f"    - {ts.name}  [{tag}]")
                 if ts.description:
                     lines.append(f"        {ts.description}")
@@ -200,7 +204,9 @@ def integration_spec_from(
             derived_name = derived_name or sk_name
             src_label = src_label or str(item)
         else:  # a string/path that is neither a ref nor an existing skill source
-            unrecognized.append(str(item) if isinstance(item, (str, Path)) else repr(item))
+            unrecognized.append(
+                str(item) if isinstance(item, (str, Path)) else repr(item)
+            )
 
     if unrecognized:
         raise ValueError(

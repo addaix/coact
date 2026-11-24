@@ -226,7 +226,9 @@ def _introspect_tools(refs: list[str]) -> tuple[list[dict], list[str]]:
                 f"({e.__class__.__name__}); listed by name only"
             )
         tools.append({"name": tool_name, "description": description})
-    duplicates = sorted(n for n, c in Counter(t["name"] for t in tools).items() if c > 1)
+    duplicates = sorted(
+        n for n, c in Counter(t["name"] for t in tools).items() if c > 1
+    )
     if duplicates:
         warnings.append(
             "duplicate tool name(s) "

@@ -54,6 +54,7 @@ from command_registry.core import command
 
 class ApplyFilterParams(BaseModel):
     """Filter the active dataset by a column condition."""
+
     column: str = Field(description="Column name to filter on")
     operator: Literal["=", "!=", ">", "<", ">=", "<="]
     value: str | float
@@ -63,7 +64,7 @@ class ApplyFilterParams(BaseModel):
     id="app.data.applyFilter",
     summary="Apply Filter",
     schema=ApplyFilterParams,
-    side_effect="additive",          # query | additive | destructive
+    side_effect="additive",  # query | additive | destructive
     idempotent=True,
     open_world=False,
     requires_confirmation=False,
@@ -127,6 +128,7 @@ def build_mcp_server(name: str = "AppMCP") -> FastMCP:
             idempotentHint=spec.idempotent,
             openWorldHint=spec.open_world,
         )
+
         @mcp.tool(
             name=spec.id,
             description=spec.description,
@@ -143,11 +145,13 @@ def build_mcp_server(name: str = "AppMCP") -> FastMCP:
         )
         def _tool(params: spec.schema, _spec=spec):
             return _spec.handler(params)
+
     return mcp
 
 
 if __name__ == "__main__":
     import commands.data  # triggers registration
+
     build_mcp_server().run(transport="streamable-http", host="0.0.0.0", port=8000)
 ```
 
@@ -159,6 +163,7 @@ if __name__ == "__main__":
 # emitters/json_schema_emitter.py
 import json
 from command_registry.core import registry
+
 
 def emit_json_schemas(output_path: str) -> None:
     bundle = {
@@ -196,17 +201,23 @@ Follow Thor's `python-package-architecture` skill conventions. The dispatch tabl
 import argparse, json
 from command_registry.core import registry
 
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="app")
     subparsers = parser.add_subparsers(dest="command", required=True)
     for spec in registry().values():
         if "cli" not in spec.surfaces:
             continue
-        sub = subparsers.add_parser(spec.id, help=spec.summary, description=spec.description)
+        sub = subparsers.add_parser(
+            spec.id, help=spec.summary, description=spec.description
+        )
         for name, field in spec.schema.model_fields.items():
-            sub.add_argument(f"--{name.replace('_', '-')}", dest=name, help=field.description)
+            sub.add_argument(
+                f"--{name.replace('_', '-')}", dest=name, help=field.description
+            )
         sub.set_defaults(_handler=spec.handler, _schema=spec.schema)
     return parser
+
 
 def main(argv=None) -> None:
     args = vars(build_parser().parse_args(argv))
@@ -231,6 +242,7 @@ COMMANDS = {
     spec.id: spec.handler for spec in registry().values() if "cli" in spec.surfaces
 }
 
+
 def main() -> None:
     raise SystemExit(cw.dispatch(COMMANDS, prog="app"))
 ```
@@ -251,11 +263,15 @@ Mount each command as a route. `FastMCP.from_fastapi()` can then re-emit an MCP 
 
 ```python
 def to_openai_tool(spec):
-    return {"type": "function", "function": {
-        "name": spec.id,
-        "description": spec.description,
-        "parameters": spec.schema.model_json_schema(),
-    }}
+    return {
+        "type": "function",
+        "function": {
+            "name": spec.id,
+            "description": spec.description,
+            "parameters": spec.schema.model_json_schema(),
+        },
+    }
+
 
 def to_anthropic_tool(spec):
     return {
@@ -263,6 +279,7 @@ def to_anthropic_tool(spec):
         "description": spec.description,
         "input_schema": spec.schema.model_json_schema(),
     }
+
 
 def to_gemini_tool(spec):
     return {
@@ -284,10 +301,13 @@ Always enforce both:
 # emitters/scope_middleware.py
 from fastmcp.server.middleware import ListToolsMiddleware
 
+
 class ScopeFilteringMiddleware(ListToolsMiddleware):
     async def on_list_tools(self, context, tools):
         user_scopes = set(context.auth_info.scopes)
-        return [t for t in tools if set(t.meta.get("x-scopes", ())).issubset(user_scopes)]
+        return [
+            t for t in tools if set(t.meta.get("x-scopes", ())).issubset(user_scopes)
+        ]
 ```
 
 2. **Re-check scopes inside each tool handler** so direct calls bypassing `tools/list` are still rejected. This is the Atlassian MCP Server pattern — inherit permissions from the underlying product rather than granting any of its own.

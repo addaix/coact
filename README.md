@@ -48,7 +48,7 @@ Prefer to look before you leap? Everything has a dry-run:
 from coact import plan_completion
 
 plan = plan_completion(".claude/skills/ux-analyst")
-print(plan.render())   # every synthesized field + WHERE it came from + warnings
+print(plan.render())  # every synthesized field + WHERE it came from + warnings
 ```
 
 That extends to the one backend that touches disk: `realize(agent, backend="host", dry_run=True)` returns the agent files and skill links it *would* write — without creating any of them.
@@ -83,8 +83,9 @@ Beyond COMPLETE/REALIZE, the **PUBLISH** axis packages a capability (Python tool
 ```python
 from coact import publish
 
-publish(["mypkg.tools:summarize", "mypkg.tools:translate"],
-        name="text-tools", dest="dist")          # → dist/text-tools.mcpb
+publish(
+    ["mypkg.tools:summarize", "mypkg.tools:translate"], name="text-tools", dest="dist"
+)  # → dist/text-tools.mcpb
 ```
 
 Sources can be `module:function` refs, live callables, or a skill carrying a `coact: mcp:` block. `dry_run=True` (or `--dry-run`) previews the bundle without writing it. This is the **local** surface (stdio, no OAuth). Install: `pip install coact[mcpb]`.
@@ -93,9 +94,14 @@ For the **remote** surface — a claude.ai *custom connector* (a hosted Streamab
 
 ```python
 from coact import publish_remote
-publish_remote(["mypkg.tools:summarize"], name="my-conn", dest="out",
-               connector_url="https://my-conn.example.com",   # this server's public URL
-               idp_issuer="https://my-idp.example.com")        # your managed IdP
+
+publish_remote(
+    ["mypkg.tools:summarize"],
+    name="my-conn",
+    dest="out",
+    connector_url="https://my-conn.example.com",  # this server's public URL
+    idp_issuer="https://my-idp.example.com",
+)  # your managed IdP
 # → out/my-conn-connector/  (server/app.py + connector_config.json + DEPLOY.md + …)
 ```
 
@@ -109,8 +115,8 @@ from coact import integration_spec_from_description
 # This routes through aix/oa — it makes a real LLM call (needs a configured
 # provider). Inject `llm=<callable>` to run it offline (e.g. in tests).
 spec = integration_spec_from_description("expose os.path.basename as a tool")
-print(spec.render())   # a DRAFT: a tool becomes a runnable ref only if the model
-                       # binds it to module:function code — else it stays proposed
+print(spec.render())  # a DRAFT: a tool becomes a runnable ref only if the model
+# binds it to module:function code — else it stays proposed
 ```
 
 The draft is a **design artifact**: tools without a `module:function` handler are *proposed* (won't run until you bind them to real code). The LLM touches **only** this path — the code → `.mcpb` path stays LLM-free (`DECISIONS.md` D10/D18). Install: `pip install coact[nl]`.
@@ -157,18 +163,20 @@ coact:
 
 <!-- wads-docs: skip needs a skill in the reader project or an LLM key -->
 ```python
-agent_step = realize(agent, backend="sdk")          # aw-compatible runnable
+agent_step = realize(agent, backend="sdk")  # aw-compatible runnable
 artifact, info = agent_step.execute(task, context={})
 
-server = realize(".claude/skills/ux-analyst", backend="mcp")   # FastMCP handle
+server = realize(".claude/skills/ux-analyst", backend="mcp")  # FastMCP handle
 
 # same definition, a different provider — map model selectors however you like
 llm_step = realize(agent, backend="litellm", model_map={"sonnet": "openai/gpt-4o"})
-artifact, info = llm_step.execute(task)             # info["backend"] == "litellm"
+artifact, info = llm_step.execute(task)  # info["backend"] == "litellm"
 
 # one definition → a LangGraph node / CrewAI Agent you compose into your own topology
-graph_step = realize(agent, backend="langgraph")    # graph_step.agent is a CompiledStateGraph
-crew_step  = realize(agent, backend="crewai")       # crew_step.agent is a crewai.Agent
+graph_step = realize(
+    agent, backend="langgraph"
+)  # graph_step.agent is a CompiledStateGraph
+crew_step = realize(agent, backend="crewai")  # crew_step.agent is a crewai.Agent
 ```
 
 ## Two boundaries to know
@@ -179,6 +187,7 @@ crew_step  = realize(agent, backend="crewai")       # crew_step.agent is a crewa
 <!-- wads-docs: skip needs a skill in the reader project or an LLM key -->
   ```python
   from coact import estimate
+
   print(estimate([agent_a, agent_b]).render())
   ```
 
@@ -187,7 +196,8 @@ crew_step  = realize(agent, backend="crewai")       # crew_step.agent is a crewa
 <!-- wads-docs: skip needs a skill in the reader project or an LLM key -->
   ```python
   from coact import scaffold_fleet
-  scaffold_fleet([agent_a, agent_b], dest="fleet.py")   # a runnable starter you own
+
+  scaffold_fleet([agent_a, agent_b], dest="fleet.py")  # a runnable starter you own
   ```
 
 ## Design notes

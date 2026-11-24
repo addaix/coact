@@ -74,7 +74,7 @@ _SERVER_APP = _SERVER_APP.format(config_name=SERVER_CONFIG_NAME)
 
 _REQUIREMENTS = "py2mcp>=0.1.5\nfastmcp>=3\nuvicorn[standard]>=0.27\n"
 
-_DOCKERFILE = '''\
+_DOCKERFILE = """\
 FROM python:3.12-slim
 WORKDIR /app
 COPY requirements.txt .
@@ -83,7 +83,7 @@ COPY server ./server
 # Bind locally; terminate TLS at your reverse proxy / platform.
 ENV PORT=8000
 CMD ["sh", "-c", "uvicorn server.app:app --host 0.0.0.0 --port ${PORT}"]
-'''
+"""
 
 
 def publish_remote(
@@ -230,7 +230,10 @@ def _build_auth(
 
     missing = [
         label
-        for label, value in (("connector_url", connector_url), ("idp_issuer", idp_issuer))
+        for label, value in (
+            ("connector_url", connector_url),
+            ("idp_issuer", idp_issuer),
+        )
         if not value
     ]
     if missing:
@@ -288,7 +291,7 @@ Edit `server/{SERVER_CONFIG_NAME}` → `auth`:
 - `jwks_uri`: the IdP's JWKS endpoint (signing keys).
 - `audience`: **this** connector's resource id (its public URL) — the token's
   `aud`. This audience binding (RFC 8707) is what stops a token minted for another
-  service being replayed here. Current value: `{auth['audience']}`.
+  service being replayed here. Current value: `{auth["audience"]}`.
 - `base_url`: this connector's public base URL.
 - `required_scopes`: scopes every request must carry (optional).
 

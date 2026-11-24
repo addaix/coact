@@ -84,9 +84,7 @@ def publish(
     impl = targets.get(target)
     if impl is None:
         available = ", ".join(sorted(targets)) or "(none registered)"
-        raise ValueError(
-            f"Unknown publish target: {target!r}. Available: {available}"
-        )
+        raise ValueError(f"Unknown publish target: {target!r}. Available: {available}")
     return impl(source, dry_run=dry_run, **kwargs)
 
 

@@ -103,9 +103,7 @@ class RunnableCrewAIAgent:
     def build_goal(self) -> str:
         """The CrewAI ``goal`` (required, non-empty)."""
         return (
-            self.agent_def.description
-            or self.agent_def.prompt
-            or "(no goal specified)"
+            self.agent_def.description or self.agent_def.prompt or "(no goal specified)"
         )
 
     def build_backstory(self) -> str:

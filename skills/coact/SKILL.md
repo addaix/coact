@@ -25,9 +25,10 @@ The one-liner:
 
 ```python
 from coact import complete, emit_agent, realize
-agent = complete(".claude/skills/ux-analyst")   # Skill -> AgentDefinition (no LLM)
-print(emit_agent(agent, "claude-agents-md"))     # the .claude/agents/*.md
-realize(agent, backend="host")                   # materialize so Claude Code runs it
+
+agent = complete(".claude/skills/ux-analyst")  # Skill -> AgentDefinition (no LLM)
+print(emit_agent(agent, "claude-agents-md"))  # the .claude/agents/*.md
+realize(agent, backend="host")  # materialize so Claude Code runs it
 ```
 
 Everything that writes or spawns has a **dry-run** first (progressive disclosure):

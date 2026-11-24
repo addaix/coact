@@ -126,14 +126,20 @@ Mirror `skill`'s verb-style API (`create`, `validate`, `install`, `link`) so the
 from coact import complete, plan_completion, emit_agent
 
 # Inspect what COMPLETE would synthesize, without writing files (progressive disclosure: dry-run first)
-plan = plan_completion('.claude/skills/ux-analyst', policy=...)   # -> AgentPlan (the filled §3.2 table + provenance of each field)
+plan = plan_completion(
+    ".claude/skills/ux-analyst", policy=...
+)  # -> AgentPlan (the filled §3.2 table + provenance of each field)
 
 # Produce an agent definition object from a skill (or skill dir / skill name)
-agent_def = complete('.claude/skills/ux-analyst', policy=...)     # -> AgentDefinition
+agent_def = complete(".claude/skills/ux-analyst", policy=...)  # -> AgentDefinition
 
 # Serialize to the two known targets (filesystem md, and programmatic SDK dict)
-emit_agent(agent_def, target='claude-agents-md', dest='.claude/agents/')   # writes ux-analyst.md
-emit_agent(agent_def, target='sdk-agent-dict')                              # returns the AgentDefinition kwargs for the Agent SDK
+emit_agent(
+    agent_def, target="claude-agents-md", dest=".claude/agents/"
+)  # writes ux-analyst.md
+emit_agent(
+    agent_def, target="sdk-agent-dict"
+)  # returns the AgentDefinition kwargs for the Agent SDK
 ```
 
 ### 5.2 `AgentDefinition` (the SSOT object)
@@ -174,14 +180,16 @@ These two fields are not mechanical. Design the synthesis so it is:
 from coact import realize
 
 # host backend: materialize files so Claude Code runs it
-realize(agent_def_or_dir, backend='host', dest='.')
+realize(agent_def_or_dir, backend="host", dest=".")
 
 # sdk backend: get a runnable, aw-compatible object
-agent = realize(agent_def, backend='sdk', llm=...)   # -> RunnableAgent (AgenticStep-compatible)
+agent = realize(
+    agent_def, backend="sdk", llm=...
+)  # -> RunnableAgent (AgenticStep-compatible)
 artifact, info = agent.execute(task_input, context)
 
 # mcp backend: expose the skill's tools as an MCP server (delegates to py2mcp)
-server = realize(agent_def, backend='mcp')           # -> py2mcp server handle
+server = realize(agent_def, backend="mcp")  # -> py2mcp server handle
 server.run()
 ```
 

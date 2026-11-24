@@ -122,16 +122,18 @@ from prompts_lib import PromptStore
 store = PromptStore.from_git(repo="git@github.com:org/prompts.git", ref="main")
 
 # By label (default 'production'), explicit version, or label
-prompt = store.get("customer-support")                          # latest production
-prompt = store.get("customer-support", version="2.3.0")         # pinned version
-prompt = store.get("customer-support", label="staging")         # latest staging
+prompt = store.get("customer-support")  # latest production
+prompt = store.get("customer-support", version="2.3.0")  # pinned version
+prompt = store.get("customer-support", label="staging")  # latest staging
 
 text = prompt.compile(user_query="Where is my order?", order_history={...})
 
 # Progressive disclosure helpers (for skill-style use)
-manifest = store.manifest(kind="skill")          # all skill metadata, for system-prompt injection
-body     = store.load_skill("pdf-processing")    # full SKILL.md body (level 2)
-file     = store.read_skill_file("pdf-processing", "scripts/extract.py")  # level 3
+manifest = store.manifest(
+    kind="skill"
+)  # all skill metadata, for system-prompt injection
+body = store.load_skill("pdf-processing")  # full SKILL.md body (level 2)
+file = store.read_skill_file("pdf-processing", "scripts/extract.py")  # level 3
 
 # Auto-routing via embedding similarity
 matches = store.semantic_search("how do I refund a customer?", k=3)
@@ -199,9 +201,9 @@ Pattern: store user-editable prompts in the application DB, NOT in Git. Compose 
 ```python
 def build_system_prompt(workspace_id: str, user_id: str) -> str:
     parts = [
-        store.get("internal-base").compile(),               # from Git (canonical)
-        db.get_workspace_prompt(workspace_id) or "",        # from DB (editable)
-        db.get_user_prompt(user_id) or "",                  # from DB (editable, per-user)
+        store.get("internal-base").compile(),  # from Git (canonical)
+        db.get_workspace_prompt(workspace_id) or "",  # from DB (editable)
+        db.get_user_prompt(user_id) or "",  # from DB (editable, per-user)
     ]
     return "\n\n".join(p for p in parts if p)
 ```

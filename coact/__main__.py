@@ -181,7 +181,13 @@ def publish(
         if idp_issuer is not None:
             extra["idp_issuer"] = idp_issuer
     res = _publish(
-        src, target=target, dest=dest, name=name, author=author, dry_run=dry_run, **extra
+        src,
+        target=target,
+        dest=dest,
+        name=name,
+        author=author,
+        dry_run=dry_run,
+        **extra,
     )
     return res.render()
 

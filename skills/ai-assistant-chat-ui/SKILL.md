@@ -76,9 +76,11 @@ import asyncio, json
 
 app = FastAPI()
 
+
 @app.post("/api/chat")
 async def chat(body: dict):
     messages = body["messages"]
+
     async def gen():
         # AI SDK UI Message Stream Protocol — minimal: emit text-delta parts
         # Each part is a JSON line prefixed by its type
@@ -88,6 +90,7 @@ async def chat(body: dict):
             yield f"data: {payload}\n\n"
             await asyncio.sleep(0.05)
         yield 'data: {"type":"finish"}\n\n'
+
     return StreamingResponse(
         gen(),
         media_type="text/event-stream",
